@@ -10,5 +10,6 @@ libraryDependencies ++= Seq(
   jdbc,
   anorm,
   cache,
-  ws
+  ws,
+  "se.radley" %% "play-plugins-salat" % "1.5.0"
 )
