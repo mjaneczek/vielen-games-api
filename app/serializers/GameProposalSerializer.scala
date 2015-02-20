@@ -22,7 +22,7 @@ class GameProposalSerializer(game_proposals: List[GameProposal]) {
   private def serializeAwaitingPlayer(user: User) = {
     JsObject(
       "id" -> JsString(user.id.toString) ::
-      "avatar_url" -> JsString(user.avatar_url.getOrElse("")) ::
+      "avatar_url" -> JsString("") ::
       "name" -> JsString(user.name) :: Nil
     )
   }

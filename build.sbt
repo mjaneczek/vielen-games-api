@@ -11,5 +11,6 @@ libraryDependencies ++= Seq(
   anorm,
   cache,
   ws,
-  "se.radley" %% "play-plugins-salat" % "1.5.0"
+  "se.radley" %% "play-plugins-salat" % "1.5.0",
+  "com.restfb" % "restfb" % "1.6.12"
 )

@@ -1,0 +1,17 @@
+package controllers
+
+import com.restfb.DefaultFacebookClient
+import interactors.LoginInteractor
+import play.api.libs.json.{JsObject}
+import play.api.mvc._
+import serializers.UserSerializer
+
+object Sessions extends Controller {
+
+  def create = Action(parse.tolerantJson) { request =>
+    val params = request.body.as[JsObject].fields.toMap // there must be less ugly solution!
+
+    val user = new LoginInteractor(new DefaultFacebookClient(params("provider_token").as[String])).call
+    Ok(new UserSerializer(user).toJson())
+  }
+}
