@@ -4,5 +4,5 @@ import org.specs2.specification.Step
 
 trait InteractorSpec extends Specification {
   sequential
-  override def is = Step { MongoClient().dropDatabase(DAOs.DatabaseName) } ^ super.is
+  override def is = Step { MongoClient().dropDatabase(DAOs.databaseName) } ^ super.is
 }

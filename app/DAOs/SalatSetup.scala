@@ -1,9 +1,8 @@
+import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.commons.conversions.scala.RegisterJodaTimeConversionHelpers
 import com.novus.salat.{Context, StringTypeHintStrategy, TypeHintFrequency}
 
 package object DAOs {
-  val DatabaseName = "vielen-games"
-
   implicit val context = {
     RegisterJodaTimeConversionHelpers()
 
@@ -14,5 +13,17 @@ package object DAOs {
 
     context.registerGlobalKeyOverride(remapThis = "id", toThisInstead = "_id")
     context
+  }
+
+  def defineCollection(name: String) = {
+    MongoClient(MongoClientURI(databaseUri))(databaseName)(name)
+  }
+
+  def databaseName = {
+    sys.env.getOrElse("DATABASE_NAME", "vielen-games-api")
+  }
+
+  def databaseUri = {
+    sys.env.getOrElse("DATABASE_URI", "mongodb://localhost:27017/")
   }
 }
