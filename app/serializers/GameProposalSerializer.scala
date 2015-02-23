@@ -6,7 +6,7 @@ import play.api.libs.json.{JsArray, JsString, JsObject}
 
 class GameProposalSerializer(game_proposals: List[GameProposal]) {
 
-  def toJson() = {
+  def toJson = {
     JsArray(game_proposals.map(gameProposal => serializeGameProposal(gameProposal)))
   }
 
@@ -14,16 +14,8 @@ class GameProposalSerializer(game_proposals: List[GameProposal]) {
     JsObject(
       "id" -> JsString(gameProposal.id.toString) ::
       "game_type" -> JsString("kuridor") ::
-      "awaiting_players" -> JsArray(gameProposal.users.map(user => serializeAwaitingPlayer(user))) ::
+      "awaiting_players" -> JsArray(gameProposal.users.map(user => new UserSerializer(user).toJson)) ::
       "age_in_seconds" -> JsString(ageInSeconds(gameProposal).toString) :: Nil
-    )
-  }
-
-  private def serializeAwaitingPlayer(user: User) = {
-    JsObject(
-      "id" -> JsString(user.id.toString) ::
-      "avatar_url" -> JsString("") ::
-      "name" -> JsString(user.name) :: Nil
     )
   }
 

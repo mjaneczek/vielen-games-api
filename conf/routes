@@ -1,7 +1,9 @@
 GET     /                   controllers.Application.index
 
 POST    /sessions           controllers.Sessions.create
+
 GET     /game_proposals     controllers.GameProposals.index
+POST    /game_proposals     controllers.GameProposals.create
 
 # assets
 GET     /assets/*file       controllers.Assets.at(path="/public", file)

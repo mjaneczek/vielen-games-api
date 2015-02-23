@@ -1,19 +1,30 @@
 package controllers
 
+import DAOs.UserDAO
+import com.mongodb.casbah.commons.MongoDBObject
+import play.api.libs.json.JsValue
 import play.api.mvc._
 import serializers.GameProposalSerializer
-import interactors.GetGameProposalsInteractor
+import interactors.{CreateGameProposalInteractor, GetGameProposalsInteractor}
 
 object GameProposals extends Controller {
 
   def index = Action {
-    val gameProposals = new GetGameProposalsInteractor().call
-    Ok(new GameProposalSerializer(gameProposals).toJson())
+    renderGameProposals
   }
 
-//  def create = Action {
-//    val user = User(name = "test user")
-//    val game_proposal = GameProposal(users = List[User](user))
-//    GameProposal.insert(game_proposal)
-//  }
+  def create = Action { request =>
+    new CreateGameProposalInteractor(currentUser(request)).call
+    renderGameProposals
+  }
+
+  def renderGameProposals = {
+    val gameProposals = new GetGameProposalsInteractor().call
+    Ok(new GameProposalSerializer(gameProposals).toJson)
+  }
+
+  def currentUser(request : Request[AnyContent]) = {
+    val authToken = request.headers.get("X-Auth-Token").get
+    UserDAO.findOne(MongoDBObject("authenticateToken" -> authToken)).get
+  }
 }
