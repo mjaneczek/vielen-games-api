@@ -10,19 +10,19 @@ class LoginInteractor(facebookClient: FacebookClient) {
     findUserByProviderId.getOrElse { UserDAO.insert(newUser); newUser }
   }
 
-  private def newUser = {
-    User(name = fbUser.getName, providerId = fbUser.getId, authenticateToken = generateAuthToken)
+  private def findUserByProviderId = {
+    UserDAO.findOne(MongoDBObject("providerId" -> fbUser.getId))
   }
 
-  private def fbUser = {
+  private lazy val newUser = {
+    User(name = fbUser.getName, providerId = fbUser.getId, authenticateToken = authToken)
+  }
+
+  private lazy val fbUser = {
     facebookClient.fetchObject("me", classOf[com.restfb.types.User])
   }
 
-  private def generateAuthToken = {
+  private val authToken = {
     java.util.UUID.randomUUID.toString
-  }
-
-  private def findUserByProviderId = {
-    UserDAO.findOne(MongoDBObject("providerId" -> fbUser.getId))
   }
 }

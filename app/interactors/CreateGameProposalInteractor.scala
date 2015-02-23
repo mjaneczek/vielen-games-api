@@ -9,7 +9,7 @@ class CreateGameProposalInteractor(user: User) {
     newGameProposal
   }
 
-  lazy val newGameProposal = {
+  private val newGameProposal = {
     new GameProposal(users = List(user))
   }
 }
