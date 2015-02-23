@@ -2,7 +2,6 @@ package controllers
 
 import DAOs.UserDAO
 import com.mongodb.casbah.commons.MongoDBObject
-import play.api.libs.json.JsValue
 import play.api.mvc._
 import serializers.GameProposalSerializer
 import interactors.{CreateGameProposalInteractor, GetGameProposalsInteractor}

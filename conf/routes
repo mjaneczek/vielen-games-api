@@ -5,5 +5,7 @@ POST    /sessions           controllers.Sessions.create
 GET     /game_proposals     controllers.GameProposals.index
 POST    /game_proposals     controllers.GameProposals.create
 
+GET     /sessions/updates   controllers.Sessions.updates
+
 # assets
 GET     /assets/*file       controllers.Assets.at(path="/public", file)

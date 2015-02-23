@@ -2,9 +2,10 @@ package controllers
 
 import com.restfb.DefaultFacebookClient
 import interactors.LoginInteractor
-import play.api.libs.json.JsObject
+import org.joda.time.DateTime
+import play.api.libs.json.{JsArray, JsString, JsObject}
 import play.api.mvc._
-import serializers.SessionSerializer
+import serializers.{SessionSerializer}
 
 object Sessions extends Controller {
 
@@ -13,5 +14,12 @@ object Sessions extends Controller {
 
     val user = new LoginInteractor(new DefaultFacebookClient(params("provider_token").as[String])).call
     Ok(new SessionSerializer(user).toJson)
+  }
+
+  def updates = Action {
+    Ok(JsObject(
+      "until" -> JsString(DateTime.now().toString) ::
+      "games" -> JsArray() :: Nil
+    ))
   }
 }
