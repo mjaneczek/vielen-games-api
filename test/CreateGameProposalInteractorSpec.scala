@@ -15,5 +15,10 @@ class CreateGameProposalInteractorSpec extends InteractorSpec {
       GameProposalDAO.count() must beEqualTo(1)
     }
 
+    "removes oldest game proposal if more than 3" in {
+      for( x <- 1 to 10) { new CreateGameProposalInteractor(user).call }
+      GameProposalDAO.count() must beEqualTo(3)
+    }
+
   }
 }
