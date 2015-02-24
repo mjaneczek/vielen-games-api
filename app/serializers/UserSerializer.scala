@@ -9,7 +9,7 @@ class UserSerializer(user: User) {
     JsObject(
       "id" -> JsString(user.id.toString) ::
       "name" -> JsString(user.name) ::
-      "avatar_url" -> JsString(s"http://graph.facebook.com/${user.providerId}/picture?type=large") :: Nil
+      "avatar_url" -> JsString(s"http://graph.facebook.com/${user.providerId}/picture?width=200&height=200") :: Nil
     )
   }
 }
