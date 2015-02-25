@@ -3,7 +3,7 @@ package interactors
 import DAOs.GameDAO
 import com.mongodb.WriteConcern
 import com.mongodb.casbah.commons.MongoDBObject
-import models.{Move, Game}
+import models.{Player, Move, Game}
 import org.joda.time.DateTime
 
 class CreateMoveInteractor(game : Game, move: Move) {
@@ -16,7 +16,7 @@ class CreateMoveInteractor(game : Game, move: Move) {
   }
 
   private def updatedGame = {
-    game.copy(activeTeam = nextTeam, players = updatedPlayers, moves = game.moves ::: List(move), updatedAt = DateTime.now())
+    game.copy(winner = winner, activeTeam = nextTeam, players = updatedPlayers, moves = game.moves ::: List(move), updatedAt = DateTime.now())
   }
 
   private def updatedPlayers = {
@@ -36,6 +36,17 @@ class CreateMoveInteractor(game : Game, move: Move) {
 
   private def nonActivePlayer = {
     game.players.filterNot(player => player == activePlayer).head
+  }
+
+  private def winner = {
+    if(winningYPosition(game.activeTeam) == move.position(1) && move.moveType == "pawn")
+      activePlayer
+    else
+      null
+  }
+
+  private val winningYPosition = {
+    Map("team_1" -> '9', "team_2" -> '1')
   }
 
   private def nextTeam = {

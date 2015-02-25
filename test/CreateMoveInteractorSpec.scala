@@ -30,6 +30,14 @@ class CreateMoveInteractorSpec extends InteractorSpec {
       lastGame.players.head.wallsLeft must beEqualTo(9)
     }
 
+    "checks winning move" in {
+      new CreateMoveInteractor(game, Move(moveType = "pawn", position = "e9")).call
+      lastGame.winner must beEqualTo(activePlayer)
+
+      new CreateMoveInteractor(game.copy(activeTeam = "team_2"), Move(moveType = "pawn", position = "e1")).call
+      lastGame.winner must beEqualTo(player)
+    }
+
   }
 
   def lastGame = {
