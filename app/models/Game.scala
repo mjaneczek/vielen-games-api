@@ -6,7 +6,8 @@ import org.joda.time.DateTime
 case class Game
 (
   id: ObjectId = new ObjectId,
-  users: List[Player],
-  winnerId: String = null,
+  players: List[Player],
+  winner: Player = null,
+  moves: List[Move] = List.empty,
   created_at: DateTime = DateTime.now()
 )

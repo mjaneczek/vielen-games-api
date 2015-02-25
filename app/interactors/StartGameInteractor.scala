@@ -1,7 +1,7 @@
 package interactors
 
 import DAOs.{GameDAO, GameProposalDAO}
-import models.{Player, Game, GameProposal, User}
+import models.{Player, Game, User}
 import se.radley.plugin.salat.Binders.ObjectId
 
 class StartGameInteractor(user: User, gameProposalId: String) {
@@ -12,7 +12,7 @@ class StartGameInteractor(user: User, gameProposalId: String) {
   }
 
   private val gameFromProposal = {
-    Game(users = getPlayers)
+    Game(players = getPlayers)
   }
 
   private lazy val gameProposal = {
@@ -24,7 +24,7 @@ class StartGameInteractor(user: User, gameProposalId: String) {
   }
 
   private def createPlayer(user : User, teamName : String) = {
-    Player(id = user.id, name = user.name, team = teamName)
+    Player(id = user.id, name = user.name, team = teamName, providerId = user.providerId)
   }
 
   private def proposalUser = {

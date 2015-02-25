@@ -1,11 +1,12 @@
 package controllers
 
+import DAOs.GameDAO
 import com.restfb.DefaultFacebookClient
 import interactors.LoginInteractor
 import org.joda.time.DateTime
-import play.api.libs.json.{JsArray, JsString, JsObject}
+import play.api.libs.json.{JsString, JsObject}
 import play.api.mvc._
-import serializers.{SessionSerializer}
+import serializers.{UpdatesSerializer, SessionSerializer}
 
 object Sessions extends Controller {
 
@@ -19,7 +20,7 @@ object Sessions extends Controller {
   def updates = Action {
     Ok(JsObject(
       "until" -> JsString(DateTime.now().toString) ::
-      "games" -> JsArray() :: Nil
+      "games" -> new UpdatesSerializer(GameDAO.findAll().toList).toJson :: Nil
     ))
   }
 }
