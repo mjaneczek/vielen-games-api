@@ -22,9 +22,9 @@ class UpdatesSerializer(games: List[Game]) {
 
   private def serializeCurrentState(game: Game) = {
     JsObject(
-      "teams" -> JsObject(teams.map(team => (team, serializeTeamState(team)))) ::
+      "teams" -> JsObject(teams.map(team => (team, serializeTeamState(game, team)))) ::
       "walls" -> JsArray(wallPositions(game)) ::
-      "active_team" -> JsString("team_1") :: Nil
+      "active_team" -> JsString(game.activeTeam) :: Nil
     )
   }
 
@@ -32,15 +32,15 @@ class UpdatesSerializer(games: List[Game]) {
     List("team_1", "team_2")
   }
 
-  def serializeTeamState(team : String) = {
+  def serializeTeamState(game : Game, team : String) = {
     JsObject(
-      "pawn_position" -> JsString(startPosition(team)) ::
-      "walls_left" -> JsNumber(10) :: Nil
+      "pawn_position" -> JsString(playerByTeam(game, team).pawnPosition) ::
+      "walls_left" -> JsNumber(BigDecimal(playerByTeam(game, team).wallsLeft)) :: Nil
     )
   }
 
-  def startPosition(team: String) = {
-    if(team == "team_1") "e1" else "e9"
+  def playerByTeam(game : Game, team : String) = {
+    game.players.find(player => player.team == team).get
   }
 
   def wallPositions(game : Game) = {

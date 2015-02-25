@@ -8,6 +8,8 @@ POST    /game_proposals     controllers.GameProposals.create
 PUT     /game_proposals/:id/awaiting_players             controllers.GameProposals.startGame(id: String)
 DELETE  /game_proposals/:id/awaiting_players/:userId     controllers.GameProposals.delete(id: String, userId: String)
 
+POST     /games/:game_id/moves    controllers.Game.addMove(game_id: String)
+
 GET     /sessions/updates   controllers.Sessions.updates
 
 # assets
