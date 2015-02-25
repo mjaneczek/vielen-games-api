@@ -9,5 +9,7 @@ case class Game
   players: List[Player],
   winner: Player = null,
   moves: List[Move] = List.empty,
-  created_at: DateTime = DateTime.now()
+  activeTeam: String,
+  createdAt: DateTime = DateTime.now(),
+  updatedAt: DateTime = DateTime.now()
 )

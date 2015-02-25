@@ -7,5 +7,7 @@ case class Player
   id: ObjectId = new ObjectId,
   name: String,
   team: String,
-  providerId: String
+  providerId: String,
+  pawnPosition: String,
+  wallsLeft: Integer
 )

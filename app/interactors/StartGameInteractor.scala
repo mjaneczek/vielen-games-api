@@ -4,6 +4,8 @@ import DAOs.{GameDAO, GameProposalDAO}
 import models.{Player, Game, User}
 import se.radley.plugin.salat.Binders.ObjectId
 
+import scala.util.Random
+
 class StartGameInteractor(user: User, gameProposalId: String) {
   def call = {
     GameProposalDAO.remove(gameProposal)
@@ -12,7 +14,7 @@ class StartGameInteractor(user: User, gameProposalId: String) {
   }
 
   private val gameFromProposal = {
-    Game(players = getPlayers)
+    Game(players = getPlayers, activeTeam = randomTeam)
   }
 
   private lazy val gameProposal = {
@@ -24,7 +26,18 @@ class StartGameInteractor(user: User, gameProposalId: String) {
   }
 
   private def createPlayer(user : User, teamName : String) = {
-    Player(id = user.id, name = user.name, team = teamName, providerId = user.providerId)
+    Player(id = user.id, name = user.name, team = teamName, providerId = user.providerId, pawnPosition = startPosition(teamName), wallsLeft = 10)
+  }
+
+  def startPosition(team : String) = {
+    team match {
+      case "team_1" => "e1"
+      case "team_2" => "e9"
+    }
+  }
+
+  def randomTeam = {
+    Random.shuffle(List("team_1", "team_2")).head
   }
 
   private def proposalUser = {

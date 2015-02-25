@@ -20,9 +20,14 @@ class StartGameInteractorSpec extends InteractorSpec with BeforeExample {
       val game = interactor.call
       GameDAO.count() must beEqualTo(1)
 
+      game.activeTeam must beEqualTo("team_1").or(beEqualTo("team_2"))
       game.players must haveSize(2)
+
       game.players.head.team must beEqualTo("team_1")
+      game.players.head.pawnPosition must beEqualTo("e1")
+
       game.players.last.team must beEqualTo("team_2")
+      game.players.last.pawnPosition must beEqualTo("e9")
     }
 
     "removes game proposal" in {
