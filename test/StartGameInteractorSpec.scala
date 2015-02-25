@@ -12,7 +12,7 @@ class StartGameInteractorSpec extends InteractorSpec with BeforeExample {
   }
 
   val joiningUser = User(name = "User who wanna join", providerId = "1234", authenticateToken = "test")
-  def interactor = new StartGameInteractor(joiningUser, gameProposal)
+  def interactor = new StartGameInteractor(joiningUser, gameProposal.id.toString)
 
   "Start game interactor" should {
 

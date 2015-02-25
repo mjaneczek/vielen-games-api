@@ -4,7 +4,7 @@ import DAOs.UserDAO
 import com.mongodb.casbah.commons.MongoDBObject
 import play.api.mvc._
 import serializers.GameProposalSerializer
-import interactors.{DeleteGameProposalInteractor, CreateGameProposalInteractor, GetGameProposalsInteractor}
+import interactors.{StartGameInteractor, DeleteGameProposalInteractor, CreateGameProposalInteractor, GetGameProposalsInteractor}
 
 object GameProposals extends Controller {
 
@@ -14,6 +14,11 @@ object GameProposals extends Controller {
 
   def create = Action { request =>
     new CreateGameProposalInteractor(currentUser(request)).call
+    renderGameProposals
+  }
+
+  def startGame(id: String) = Action { request =>
+    new StartGameInteractor(currentUser(request), id).call
     renderGameProposals
   }
 

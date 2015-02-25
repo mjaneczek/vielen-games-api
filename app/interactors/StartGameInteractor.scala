@@ -2,8 +2,9 @@ package interactors
 
 import DAOs.{GameDAO, GameProposalDAO}
 import models.{Player, Game, GameProposal, User}
+import se.radley.plugin.salat.Binders.ObjectId
 
-class StartGameInteractor(user: User, gameProposal: GameProposal) {
+class StartGameInteractor(user: User, gameProposalId: String) {
   def call = {
     GameProposalDAO.remove(gameProposal)
     GameDAO.insert(gameFromProposal)
@@ -12,6 +13,10 @@ class StartGameInteractor(user: User, gameProposal: GameProposal) {
 
   private val gameFromProposal = {
     Game(users = getPlayers)
+  }
+
+  private lazy val gameProposal = {
+    GameProposalDAO.findOneById(new ObjectId(gameProposalId)).get
   }
 
   private def getPlayers = {

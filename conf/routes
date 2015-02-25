@@ -5,6 +5,7 @@ POST    /sessions           controllers.Sessions.create
 GET     /game_proposals     controllers.GameProposals.index
 POST    /game_proposals     controllers.GameProposals.create
 
+PUT     /game_proposals/:id/awaiting_players             controllers.GameProposals.startGame(id: String)
 DELETE  /game_proposals/:id/awaiting_players/:userId     controllers.GameProposals.delete(id: String, userId: String)
 
 GET     /sessions/updates   controllers.Sessions.updates
