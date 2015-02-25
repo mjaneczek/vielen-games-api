@@ -49,7 +49,10 @@ class CreateMoveInteractor(game : Game, move: Move) {
     Map("team_1" -> '9', "team_2" -> '1')
   }
 
-  private def nextTeam = {
+  private def nextTeam : String = {
+    if(winner != null)
+      return null
+
     game.activeTeam match {
       case "team_1" => "team_2"
       case "team_2" => "team_1"

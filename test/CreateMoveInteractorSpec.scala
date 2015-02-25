@@ -36,6 +36,8 @@ class CreateMoveInteractorSpec extends InteractorSpec {
 
       new CreateMoveInteractor(game.copy(activeTeam = "team_2"), Move(moveType = "pawn", position = "e1")).call
       lastGame.winner must beEqualTo(player)
+
+      lastGame.activeTeam must beNull
     }
 
   }
