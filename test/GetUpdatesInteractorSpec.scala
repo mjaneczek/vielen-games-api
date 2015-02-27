@@ -1,7 +1,7 @@
 import DAOs.GameDAO
 import interactors.GetUpdatesInteractor
 import models.{Player, Game, User}
-import org.joda.time.DateTime
+import com.github.nscala_time.time.Imports._
 
 class GetUpdatesInteractorSpec extends InteractorSpec {
 
@@ -23,11 +23,17 @@ class GetUpdatesInteractorSpec extends InteractorSpec {
       games must contain(playerGame)
     }
 
-    "returns all games (also finished) since specific date" in {
-      val interactor = new GetUpdatesInteractor(user, DateTime.now())
+    "returns all games (also finished) when specific date" in {
+      val interactor = new GetUpdatesInteractor(user, DateTime.yesterday)
+      val games = interactor.call
+      games must contain(playerGame, finishedGame)
+    }
+
+    "returns games since specyfic date" in {
+      val interactor = new GetUpdatesInteractor(user, DateTime.nextMonth)
       val games = interactor.call
 
-      games must contain(playerGame, finishedGame)
+      games must haveSize(0)
     }
   }
 }

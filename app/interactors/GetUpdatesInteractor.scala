@@ -9,12 +9,12 @@ class GetUpdatesInteractor(user : User, since : DateTime = null) {
   def call = {
     since match {
       case null => userActiveGames
-      case _ => userGames
+      case _ => userGamesSinceDate
     }
   }
 
-  private lazy val userGames = {
-    getGames("players._id" -> user.id)
+  private lazy val userGamesSinceDate = {
+    getGames("players._id" -> user.id, "updatedAt" -> MongoDBObject("$gt" -> since))
   }
 
   private lazy val userActiveGames = {

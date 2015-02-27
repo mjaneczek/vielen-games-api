@@ -18,10 +18,12 @@ object Sessions extends Controller {
     Ok(new SessionSerializer(user).toJson)
   }
 
-  def updates = Action { request =>
+  def updates(since : Option[String]) = Action { request =>
+    val sinceDate = since.map(since => DateTime.parse(since)).orNull
+
     Ok(JsObject(
       "until" -> JsString(DateTime.now().toString) ::
-      "games" -> new UpdatesSerializer(new GetUpdatesInteractor(currentUser(request)).call).toJson :: Nil
+      "games" -> new UpdatesSerializer(new GetUpdatesInteractor(currentUser(request), sinceDate).call).toJson :: Nil
     ))
   }
 

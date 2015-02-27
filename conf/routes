@@ -10,7 +10,7 @@ DELETE  /game_proposals/:id/awaiting_players/:userId     controllers.GameProposa
 
 POST     /games/:game_id/moves    controllers.Game.addMove(game_id: String)
 
-GET     /sessions/updates   controllers.Sessions.updates
+GET     /sessions/updates   controllers.Sessions.updates(since: Option[String])
 
 # assets
 GET     /assets/*file       controllers.Assets.at(path="/public", file)
