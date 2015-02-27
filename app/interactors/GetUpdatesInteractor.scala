@@ -14,10 +14,14 @@ class GetUpdatesInteractor(user : User, since : DateTime = null) {
   }
 
   private lazy val userGames = {
-    GameDAO.find(MongoDBObject("players._id" -> user.id)).toList
+    getGames("players._id" -> user.id)
   }
 
   private lazy val userActiveGames = {
-    GameDAO.find(MongoDBObject("players._id" -> user.id, "winner" -> null)).toList
+    getGames("players._id" -> user.id, "winner" -> null)
+  }
+
+  private def getGames(conditions : (String, Any)*) = {
+    GameDAO.find(MongoDBObject(conditions.toList)).sort(orderBy = MongoDBObject("updatedAt" -> -1)).toList
   }
 }
