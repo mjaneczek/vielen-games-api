@@ -1,8 +1,9 @@
 package controllers
 
-import DAOs.GameDAO
+import DAOs.{UserDAO, GameDAO}
+import com.mongodb.casbah.commons.MongoDBObject
 import com.restfb.DefaultFacebookClient
-import interactors.LoginInteractor
+import interactors.{GetUpdatesInteractor, LoginInteractor}
 import org.joda.time.DateTime
 import play.api.libs.json.{JsString, JsObject}
 import play.api.mvc._
@@ -17,10 +18,15 @@ object Sessions extends Controller {
     Ok(new SessionSerializer(user).toJson)
   }
 
-  def updates = Action {
+  def updates = Action { request =>
     Ok(JsObject(
       "until" -> JsString(DateTime.now().toString) ::
-      "games" -> new UpdatesSerializer(GameDAO.findAll().toList).toJson :: Nil
+      "games" -> new UpdatesSerializer(new GetUpdatesInteractor(currentUser(request)).call).toJson :: Nil
     ))
+  }
+
+  def currentUser(request : Request[AnyContent]) = {
+    val authToken = request.headers.get("X-Auth-Token").get
+    UserDAO.findOne(MongoDBObject("authenticateToken" -> authToken)).get
   }
 }
