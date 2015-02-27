@@ -3,12 +3,17 @@ package interactors
 import DAOs.GameDAO
 import com.mongodb.WriteConcern
 import com.mongodb.casbah.commons.MongoDBObject
-import models.{Player, Move, Game}
+import models.{User, Player, Move, Game}
 import org.joda.time.DateTime
 
-class CreateMoveInteractor(game : Game, move: Move) {
+class CreateMoveInteractor(game : Game, user : User, move: Move) {
   def call = {
-    updateGame()
+    if(canMove) {
+      updateGame()
+      true
+    } else {
+      false
+    }
   }
 
   private def updateGame() = {
@@ -57,5 +62,9 @@ class CreateMoveInteractor(game : Game, move: Move) {
       case "team_1" => "team_2"
       case "team_2" => "team_1"
     }
+  }
+
+  private def canMove = {
+    activePlayer.id == user.id
   }
 }
