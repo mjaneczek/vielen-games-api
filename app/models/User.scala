@@ -8,5 +8,5 @@ case class User
   id: ObjectId = new ObjectId,
   name: String,
   providerId: String,
-  authenticateToken: String
+  authenticateTokens: List[String] = List.empty
 )

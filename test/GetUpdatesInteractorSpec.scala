@@ -5,7 +5,7 @@ import com.github.nscala_time.time.Imports._
 
 class GetUpdatesInteractorSpec extends InteractorSpec {
 
-  val user = User(name = "Test", providerId = "Test", authenticateToken = "123")
+  val user = User(name = "Test", providerId = "Test")
   val player = Player(id = user.id, name = user.name, providerId = user.providerId, team = "team_1", pawnPosition = "e1", wallsLeft = 10 )
 
   val playerGame = Game(players = List(player))

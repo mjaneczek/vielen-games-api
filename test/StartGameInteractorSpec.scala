@@ -4,14 +4,14 @@ import models.{GameProposal, User}
 import org.specs2.specification.BeforeExample
 
 class StartGameInteractorSpec extends InteractorSpec with BeforeExample {
-  val proposalUser = User(name = "Proposal user", providerId = "1234", authenticateToken = "test")
+  val proposalUser = User(name = "Proposal user", providerId = "1234")
   val gameProposal = GameProposal(users = List(proposalUser))
 
   def before = {
     GameProposalDAO.insert(gameProposal)
   }
 
-  val joiningUser = User(name = "User who wanna join", providerId = "1234", authenticateToken = "test")
+  val joiningUser = User(name = "User who wanna join", providerId = "1234")
   def interactor = new StartGameInteractor(joiningUser, gameProposal.id.toString)
 
   "Start game interactor" should {

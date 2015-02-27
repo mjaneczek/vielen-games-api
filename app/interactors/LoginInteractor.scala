@@ -15,7 +15,7 @@ class LoginInteractor(facebookClient: FacebookClient) {
   }
 
   private lazy val newUser = {
-    User(name = fbUser.getName, providerId = fbUser.getId, authenticateToken = authToken)
+    User(name = fbUser.getName, providerId = fbUser.getId, authenticateTokens = List(authToken))
   }
 
   private lazy val fbUser = {

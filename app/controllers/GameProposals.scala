@@ -35,6 +35,6 @@ object GameProposals extends Controller {
 
   def currentUser(request : Request[AnyContent]) = {
     val authToken = request.headers.get("X-Auth-Token").get
-    UserDAO.findOne(MongoDBObject("authenticateToken" -> authToken)).get
+    UserDAO.findOne(MongoDBObject("authenticateTokens" -> authToken)).get
   }
 }

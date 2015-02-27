@@ -22,7 +22,7 @@ class LoginInteractorSpec extends InteractorSpec {
 
       user.providerId must beEqualTo("provider_id")
       user.name must beEqualTo("Test person")
-      user.authenticateToken must not beEmpty
+      user.authenticateTokens.head must not beEmpty
     }
 
     "only returns user if already exist" in {

@@ -3,7 +3,7 @@ import interactors.CreateGameProposalInteractor
 import models.User
 
 class CreateGameProposalInteractorSpec extends InteractorSpec {
-  val user = User(name = "Test", providerId = "1234", authenticateToken = "test")
+  val user = User(name = "Test", providerId = "1234")
   val interactor = new CreateGameProposalInteractor(user)
 
   "Create game proposals interactor" should {

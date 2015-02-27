@@ -3,8 +3,8 @@ import interactors.GetGameProposalsInteractor
 import models.{Player, Game, User, GameProposal}
 
 class GetGameProposalsInteractorSpec extends InteractorSpec {
-  val user = User(name = "Test", providerId = "1234", authenticateToken = "test")
-  val secondUser = User(name = "Test 2", providerId = "1234", authenticateToken = "test")
+  val user = User(name = "Test", providerId = "1234")
+  val secondUser = User(name = "Test 2", providerId = "1234")
 
   val existingGameProposals = List(GameProposal(users = List(secondUser)), GameProposal(users = List(secondUser)))
 
