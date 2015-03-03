@@ -1,5 +1,3 @@
-GET     /                   controllers.Application.index
-
 POST    /sessions           controllers.Sessions.create
 
 GET     /game_proposals     controllers.GameProposals.index
