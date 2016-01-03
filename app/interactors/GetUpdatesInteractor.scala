@@ -8,17 +8,13 @@ import org.joda.time.DateTime
 class GetUpdatesInteractor(user : User, since : DateTime = null) {
   def call = {
     since match {
-      case null => userActiveGames
+      case null => GameDAO.findUserActiveGames(user.id)
       case _ => userGamesSinceDate
     }
   }
 
   private lazy val userGamesSinceDate = {
     getGames("players._id" -> user.id, "updatedAt" -> MongoDBObject("$gt" -> since))
-  }
-
-  private lazy val userActiveGames = {
-    getGames("players._id" -> user.id, "winner" -> null)
   }
 
   private def getGames(conditions : (String, Any)*) = {

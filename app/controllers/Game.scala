@@ -6,7 +6,7 @@ import interactors.CreateMoveInteractor
 import models.Move
 import play.api.libs.json.{JsValue, JsObject}
 import play.api.mvc._
-import se.radley.plugin.salat.Binders.ObjectId
+import org.bson.types.ObjectId
 
 object Game extends Controller {
 

@@ -12,6 +12,7 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   filters,
-  "se.radley" %% "play-plugins-salat" % "1.5.0",
-  "com.restfb" % "restfb" % "1.6.12"
+  "com.novus" %% "salat" % "1.9.9",
+  "com.restfb" % "restfb" % "1.6.12",
+  "org.mongodb" %% "casbah" % "3.0.0"
 )

@@ -8,12 +8,8 @@ import org.joda.time.DateTime
 
 class CreateMoveInteractor(game : Game, user : User, move: Move) {
   def call = {
-    if(canMove) {
-      updateGame()
-      true
-    } else {
-      false
-    }
+    if (canMove) { updateGame() }
+    canMove
   }
 
   private def updateGame() = {

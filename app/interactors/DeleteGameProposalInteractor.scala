@@ -3,7 +3,7 @@ package interactors
 import DAOs.{GameProposalDAO}
 import com.mongodb.casbah.commons.MongoDBObject
 import models.{User}
-import se.radley.plugin.salat.Binders.ObjectId
+import org.bson.types.ObjectId
 
 class DeleteGameProposalInteractor(user: User, id: String) {
   def call = {

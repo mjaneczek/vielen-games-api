@@ -2,7 +2,7 @@ package interactors
 
 import DAOs.{GameDAO, GameProposalDAO}
 import models.{Player, Game, User}
-import se.radley.plugin.salat.Binders.ObjectId
+import org.bson.types.ObjectId
 
 import scala.util.Random
 

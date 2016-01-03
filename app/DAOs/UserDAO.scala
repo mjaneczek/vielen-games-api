@@ -5,5 +5,5 @@ import com.novus.salat.dao._
 import models.User
 
 object UserDAO extends ModelCompanion[User, ObjectId] {
-  val dao = new SalatDAO[User, ObjectId](defineCollection("users")) {}
+  val dao = new MySalatDAO[User, ObjectId](defineCollection("users")) {}
 }

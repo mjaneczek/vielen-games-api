@@ -22,7 +22,7 @@ class GetGameProposalsInteractor(user : User) {
   }
 
   private lazy val userGames = {
-    GameDAO.find(MongoDBObject("players._id" -> user.id, "winner" -> null)).toList // todo: duplication / extract to DAO
+    GameDAO.findUserActiveGames(user.id)
   }
 
   private def isMyProposal(proposal : GameProposal) = {
