@@ -34,10 +34,10 @@ class CreateMoveInteractorSpec extends InteractorSpec {
     }
 
     "checks winning move" in {
-      new CreateMoveInteractor(game, user, Move(moveType = "pawn", position = "e9")).call
+      new CreateMoveInteractor(game, user, Move(moveType = "pawn", position = "a9")).call
       lastGame.winner must beEqualTo(activePlayer)
 
-      new CreateMoveInteractor(game.copy(activeTeam = "team_2"), secondUser, Move(moveType = "pawn", position = "e1")).call
+      new CreateMoveInteractor(game.copy(activeTeam = "team_2"), secondUser, Move(moveType = "pawn", position = "a1")).call
       lastGame.winner must beEqualTo(player)
 
       lastGame.activeTeam must beNull
@@ -48,6 +48,17 @@ class CreateMoveInteractorSpec extends InteractorSpec {
       result must beEqualTo(false)
     }
 
+    "returns false if pawn move is invalid" in {
+      val result = new CreateMoveInteractor(game, user, Move(moveType = "pawn", position = "e1")).call
+      result must beEqualTo(false)
+    }
+
+    "returns false if wall move is invalid" in {
+      new CreateMoveInteractor(game, user, Move(moveType = "wall", position = "he3")).call
+
+      val result = new CreateMoveInteractor(GameDAO.findOneById(game.id).get, secondUser, Move(moveType = "wall", position = "he3")).call
+      result must beEqualTo(false)
+    }
   }
 
   def lastGame = {

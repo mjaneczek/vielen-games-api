@@ -1,10 +1,9 @@
 package controllers
 
-import DAOs.{UserDAO, GameDAO}
-import com.mongodb.casbah.commons.MongoDBObject
+import DAOs.{GameDAO}
 import interactors.CreateMoveInteractor
 import models.Move
-import play.api.libs.json.{JsValue, JsObject}
+import play.api.libs.json.{JsString, JsObject}
 import play.api.mvc._
 import org.bson.types.ObjectId
 
@@ -15,9 +14,11 @@ object Game extends Controller {
 
     game.synchronized {
       val move = Move(moveType = request.params("move_type").as[String], position = request.params("position").as[String])
-      new CreateMoveInteractor(game, request.currentUser, move).call
+      if(new CreateMoveInteractor(game, request.currentUser, move).call) {
+        Ok
+      } else {
+        BadRequest(JsObject("error" -> JsString("illegal_move") :: Nil))
+      }
     }
-
-    Ok
   }
 }

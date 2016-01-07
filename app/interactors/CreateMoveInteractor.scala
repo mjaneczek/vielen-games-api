@@ -61,6 +61,8 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
   }
 
   private def canMove = {
-    activePlayer.id == user.id
+    activePlayer.id == user.id &&
+    !game.players.map(p => p.pawnPosition).contains(move.position) &&
+    !game.moves.filter((m) => m.moveType == "wall").map((m) => m.position).contains(move.position)
   }
 }
