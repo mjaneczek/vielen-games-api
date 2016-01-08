@@ -63,6 +63,24 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
   private def canMove = {
     activePlayer.id == user.id &&
     !game.players.map(p => p.pawnPosition).contains(move.position) &&
-    !game.moves.filter((m) => m.moveType == "wall").map((m) => m.position).contains(move.position)
+    !game.moves.filter((m) => m.moveType == "wall").map((m) => m.position).contains(move.position) &&
+    isNotOutOfBoardMove &&
+    isValidPawnMove
+  }
+
+  private def isNotOutOfBoardMove = {
+    val horizontalPositions = Array("a","b","c","d","e","f","g","h","i")
+    val verticalPositions = (1 to 9).toArray
+
+    horizontalPositions.contains(move.position.charAt(0).toString) && verticalPositions.contains(move.position.charAt(1).toString.toInt)
+  }
+
+  private def isValidPawnMove = {
+    var leftMove = (activePlayer.pawnPosition.charAt(0) - 1).toChar.toString + activePlayer.pawnPosition.charAt(1).toChar.toString
+    var rightMove = (activePlayer.pawnPosition.charAt(0) + 1).toChar.toString + activePlayer.pawnPosition.charAt(1).toChar.toString
+    var upMove = activePlayer.pawnPosition.charAt(0).toChar.toString + (activePlayer.pawnPosition.charAt(1) - 1).toChar.toString
+    var downMove = activePlayer.pawnPosition.charAt(0).toChar.toString + (activePlayer.pawnPosition.charAt(1) + 1).toChar.toString
+
+    Array(leftMove, rightMove, upMove, downMove) contains move.position
   }
 }
