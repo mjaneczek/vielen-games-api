@@ -1,62 +1,31 @@
-import interactors.CreateMoveInteractor
-import models.{Game, Move, Player, User}
-
-class PawnJumpingUsingBordersSpec extends InteractorSpec {
-  val user = User(name = "Test", providerId = "1234")
-  val secondUser = User(name = "Test 2", providerId = "1234")
-
-  val player = Player(id = secondUser.id, name = "Test 2", providerId = "1234", team = "team_2", pawnPosition = "e5", wallsLeft = 10)
-
+class PawnJumpingUsingBordersSpec extends MoveValidationSpec {
   "Pawn jumping using borders validation" should {
-
     "allows jumping left or right over opponent when north border is behind" in {
-      val activePlayer = Player(id = user.id, name = "Test", providerId = "1234", team = "team_1", pawnPosition = "e8", wallsLeft = 10)
-      val opponentPlayer = Player(id = secondUser.id, name = "Test 2", providerId = "1234", team = "team_2", pawnPosition = "e9", wallsLeft = 10)
-      val game = Game(players = List(activePlayer, opponentPlayer), activeTeam = "team_1")
+      activePlayer.pawnPosition = "e8"
+      opponentPlayer.pawnPosition = "e9"
 
-      areValidMoves(game, Array("e7", "f8", "d8", "d9", "f9")) must beEqualTo(true)
+      assertValidPawnMoves("e7", "f8", "d8", "d9", "f9")
     }
 
     "allows jumping left or right over opponent when south border is behind" in {
-      val activePlayer = Player(id = user.id, name = "Test", providerId = "1234", team = "team_1", pawnPosition = "e2", wallsLeft = 10)
-      val opponentPlayer = Player(id = secondUser.id, name = "Test 2", providerId = "1234", team = "team_2", pawnPosition = "e1", wallsLeft = 10)
-      val game = Game(players = List(activePlayer, opponentPlayer), activeTeam = "team_1")
+      activePlayer.pawnPosition = "e2"
+      opponentPlayer.pawnPosition = "e1"
 
-      areValidMoves(game, Array("e3", "d2", "f2", "d1", "f1")) must beEqualTo(true)
+      assertValidPawnMoves("e3", "d2", "f2", "d1", "f1")
     }
 
     "allows jumping left or right over opponent when east border is behind" in {
-      val activePlayer = Player(id = user.id, name = "Test", providerId = "1234", team = "team_1", pawnPosition = "b5", wallsLeft = 10)
-      val opponentPlayer = Player(id = secondUser.id, name = "Test 2", providerId = "1234", team = "team_2", pawnPosition = "a5", wallsLeft = 10)
-      val game = Game(players = List(activePlayer, opponentPlayer), activeTeam = "team_1")
+      activePlayer.pawnPosition = "b5"
+      opponentPlayer.pawnPosition = "a5"
 
-      areValidMoves(game, Array("c5", "b4", "b6", "a4", "a6")) must beEqualTo(true)
+      assertValidPawnMoves("c5", "b4", "b6", "a4", "a6")
     }
 
     "allows jumping left or right over opponent when west border is behind" in {
-      val activePlayer = Player(id = user.id, name = "Test", providerId = "1234", team = "team_1", pawnPosition = "h5", wallsLeft = 10)
-      val opponentPlayer = Player(id = secondUser.id, name = "Test 2", providerId = "1234", team = "team_2", pawnPosition = "i5", wallsLeft = 10)
-      val game = Game(players = List(activePlayer, opponentPlayer), activeTeam = "team_1")
+      activePlayer.pawnPosition = "h5"
+      opponentPlayer.pawnPosition = "i5"
 
-      areValidMoves(game, Array("g5", "h4", "h6", "i4", "i6")) must beEqualTo(true)
+      assertValidPawnMoves("g5", "h4", "h6", "i4", "i6")
     }
   }
-
-  def areValidMoves(game : Game, moves : Array[String]) = {
-    val horizontalPositions = Array("a","b","c","d","e","f","g","h","i")
-    val verticalPositions = (1 to 9).toArray
-    val possibleMoves = horizontalPositions.flatMap(horizontalPosition => verticalPositions.map(verticalPosition => horizontalPosition + verticalPosition))
-
-    possibleMoves.forall((position) =>  (new CreateMoveInteractor(game, user, Move(moveType = "pawn", position = position)).call == (moves contains position)))
-  }
 }
-
-// a9 b9 c9 d9 e9 f9 g9 h9 i9
-// a8 b8 c8 d8 e8 f8 g8 h8 i8
-// a7 b7 c7 d7 e7 f7 g7 h7 i7
-// a6 b6 c6 d6 e6 f6 g6 h6 i6
-// a5 b5 c5 d5 e5 f5 g5 h5 i5
-// a4 b4 c4 d4 e4 f4 g4 h4 i4
-// a3 b3 c3 d3 e3 f3 g3 h3 i3
-// a2 b2 c2 d2 e2 f2 g2 h2 i2
-// a1 b1 c1 d1 e1 f1 g1 h1 i1

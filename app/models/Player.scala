@@ -8,6 +8,6 @@ case class Player
   name: String,
   team: String,
   providerId: String,
-  pawnPosition: String,
+  var pawnPosition: String,
   wallsLeft: Integer
 )
