@@ -1,5 +1,6 @@
 package interactors
 
+import java.util.ArrayList;
 import DAOs.GameDAO
 import com.mongodb.WriteConcern
 import com.mongodb.casbah.commons.MongoDBObject
@@ -75,28 +76,73 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
     horizontalPositions.contains(move.position.charAt(0).toString) && verticalPositions.contains(move.position.charAt(1).toString.toInt)
   }
 
+  private def isOutOfBoardMove(position : String) = {
+    val horizontalPositions = Array("a","b","c","d","e","f","g","h","i")
+    val verticalPositions = (1 to 9).toArray
+
+    !horizontalPositions.contains(position.charAt(0).toString) || !position.charAt(1).isDigit || !verticalPositions.contains(position.charAt(1).toString.toInt)
+  }
+
   private def isValidPawnMove = {
     var leftMove = (activePlayer.pawnPosition.charAt(0) - 1).toChar.toString + activePlayer.pawnPosition.charAt(1).toChar.toString
     var rightMove = (activePlayer.pawnPosition.charAt(0) + 1).toChar.toString + activePlayer.pawnPosition.charAt(1).toChar.toString
     var upMove = activePlayer.pawnPosition.charAt(0).toChar.toString + (activePlayer.pawnPosition.charAt(1) + 1).toChar.toString
     var downMove = activePlayer.pawnPosition.charAt(0).toChar.toString + (activePlayer.pawnPosition.charAt(1) - 1).toChar.toString
 
+    var possibleMoves = new ArrayList[String]()
+
     if(leftMove == nonActivePlayer.pawnPosition) {
       leftMove = (activePlayer.pawnPosition.charAt(0) - 2).toChar.toString + activePlayer.pawnPosition.charAt(1).toChar.toString
+
+      if(isOutOfBoardMove(leftMove)) {
+        possibleMoves.add("a" + (activePlayer.pawnPosition.charAt(1) - 1).toChar.toString)
+        possibleMoves.add("a" + (activePlayer.pawnPosition.charAt(1) + 1).toChar.toString)
+      } else {
+        possibleMoves.add(leftMove)
+      }
+    } else {
+      possibleMoves.add(leftMove)
     }
 
     if(rightMove == nonActivePlayer.pawnPosition) {
       rightMove = (activePlayer.pawnPosition.charAt(0) + 2).toChar.toString + activePlayer.pawnPosition.charAt(1).toChar.toString
+
+      if(isOutOfBoardMove(rightMove)) {
+        possibleMoves.add("i" + (activePlayer.pawnPosition.charAt(1) - 1).toChar.toString)
+        possibleMoves.add("i" + (activePlayer.pawnPosition.charAt(1) + 1).toChar.toString)
+      } else {
+        possibleMoves.add(rightMove)
+      }
+    } else {
+      possibleMoves.add(rightMove)
     }
 
     if(upMove == nonActivePlayer.pawnPosition) {
       upMove = activePlayer.pawnPosition.charAt(0).toChar.toString + (activePlayer.pawnPosition.charAt(1) + 2).toChar.toString
+
+      if(isOutOfBoardMove(upMove)) {
+        possibleMoves.add((activePlayer.pawnPosition.charAt(0) - 1).toChar.toString + "9")
+        possibleMoves.add((activePlayer.pawnPosition.charAt(0) + 1).toChar.toString + "9")
+      } else {
+        possibleMoves.add(upMove)
+      }
+    } else {
+      possibleMoves.add(upMove)
     }
 
     if(downMove == nonActivePlayer.pawnPosition) {
       downMove = activePlayer.pawnPosition.charAt(0).toChar.toString + (activePlayer.pawnPosition.charAt(1) - 2).toChar.toString
+
+      if(isOutOfBoardMove(downMove)) {
+        possibleMoves.add((activePlayer.pawnPosition.charAt(0) - 1).toChar.toString + "1")
+        possibleMoves.add((activePlayer.pawnPosition.charAt(0) + 1).toChar.toString + "1")
+      } else {
+        possibleMoves.add(downMove)
+      }
+    } else {
+      possibleMoves.add(downMove)
     }
 
-    Array(leftMove, rightMove, upMove, downMove) contains move.position
+    possibleMoves contains move.position
   }
 }
