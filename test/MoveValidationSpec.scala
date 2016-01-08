@@ -1,5 +1,6 @@
 import interactors.CreateMoveInteractor
 import models.{Player, Move, Game, User}
+import utils.PossiblePositions
 
 trait MoveValidationSpec extends InteractorSpec {
   var activeUser = User(name = "Active user", providerId = "1234")
@@ -11,11 +12,7 @@ trait MoveValidationSpec extends InteractorSpec {
   var game = Game(players = List(activePlayer, opponentPlayer), activeTeam = "team_1")
 
   def assertValidPawnMoves(moves : String*) = {
-    val horizontalPositions = Array("a","b","c","d","e","f","g","h","i")
-    val verticalPositions = (1 to 9).toArray
-    val possiblePositions = horizontalPositions.flatMap(horizontalPosition => verticalPositions.map(verticalPosition => horizontalPosition + verticalPosition))
-
-    possiblePositions.forall((position) => {
+    PossiblePositions.pawn.forall((position) => {
       new CreateMoveInteractor(game, activeUser, Move(moveType = "pawn", position = position)).call == (moves contains position)
     }) must beTrue
   }
