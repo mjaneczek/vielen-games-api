@@ -78,8 +78,24 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
   private def isValidPawnMove = {
     var leftMove = (activePlayer.pawnPosition.charAt(0) - 1).toChar.toString + activePlayer.pawnPosition.charAt(1).toChar.toString
     var rightMove = (activePlayer.pawnPosition.charAt(0) + 1).toChar.toString + activePlayer.pawnPosition.charAt(1).toChar.toString
-    var upMove = activePlayer.pawnPosition.charAt(0).toChar.toString + (activePlayer.pawnPosition.charAt(1) - 1).toChar.toString
-    var downMove = activePlayer.pawnPosition.charAt(0).toChar.toString + (activePlayer.pawnPosition.charAt(1) + 1).toChar.toString
+    var upMove = activePlayer.pawnPosition.charAt(0).toChar.toString + (activePlayer.pawnPosition.charAt(1) + 1).toChar.toString
+    var downMove = activePlayer.pawnPosition.charAt(0).toChar.toString + (activePlayer.pawnPosition.charAt(1) - 1).toChar.toString
+
+    if(leftMove == nonActivePlayer.pawnPosition) {
+      leftMove = (activePlayer.pawnPosition.charAt(0) - 2).toChar.toString + activePlayer.pawnPosition.charAt(1).toChar.toString
+    }
+
+    if(rightMove == nonActivePlayer.pawnPosition) {
+      rightMove = (activePlayer.pawnPosition.charAt(0) + 2).toChar.toString + activePlayer.pawnPosition.charAt(1).toChar.toString
+    }
+
+    if(upMove == nonActivePlayer.pawnPosition) {
+      upMove = activePlayer.pawnPosition.charAt(0).toChar.toString + (activePlayer.pawnPosition.charAt(1) + 2).toChar.toString
+    }
+
+    if(downMove == nonActivePlayer.pawnPosition) {
+      downMove = activePlayer.pawnPosition.charAt(0).toChar.toString + (activePlayer.pawnPosition.charAt(1) - 2).toChar.toString
+    }
 
     Array(leftMove, rightMove, upMove, downMove) contains move.position
   }
