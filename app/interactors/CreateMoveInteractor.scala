@@ -90,7 +90,7 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
       for(move <- Array(moveLeft, moveRight, moveUp, moveDown)) {
         val newPosition =  (activePlayer.pawnPosition.charAt(0) + move.get("x").get.asInstanceOf[Int]).toChar.toString + (activePlayer.pawnPosition.charAt(1) +  move.get("y").get.asInstanceOf[Int]).toChar.toString
 
-        if (newPosition == nonActivePlayer.pawnPosition) {
+        if (newPosition == nonActivePlayer.pawnPosition && !isBlockedByWall(activePlayer.pawnPosition, move.get("direction").get.toString)) {
           val jumpNewPosition = (newPosition.charAt(0) + move.get("x").get.asInstanceOf[Int]).toChar.toString + (newPosition.charAt(1) +  move.get("y").get.asInstanceOf[Int]).toChar.toString
 
           if(isOutOfBoardMove(jumpNewPosition)) {
