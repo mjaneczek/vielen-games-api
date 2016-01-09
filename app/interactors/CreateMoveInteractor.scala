@@ -74,20 +74,24 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
     }
   }
 
+  lazy val wallPositions = {
+    game.moves.filter((m) => m.moveType == "wall").map((m) => m.position)
+  }
+
   class PawnMoveValidator {
     def isValidMove = {
       val validMoves = ArrayBuffer.empty[String]
 
-      val moveLeft  = Map("x" -> -1, "y" -> 0)
-      val moveRight = Map("x" -> 1, "y" -> 0)
-      val moveUp    = Map("x" -> 0, "y" -> 1)
-      val moveDown  = Map("x" -> 0, "y" -> -1)
+      val moveLeft  = Map("x" -> -1, "y" -> 0, "direction" -> "left")
+      val moveRight = Map("x" -> 1, "y" -> 0, "direction" -> "right")
+      val moveUp    = Map("x" -> 0, "y" -> 1, "direction" -> "up")
+      val moveDown  = Map("x" -> 0, "y" -> -1, "direction" -> "down")
 
       for(move <- Array(moveLeft, moveRight, moveUp, moveDown)) {
-        val newPosition =  (activePlayer.pawnPosition.charAt(0) + move.get("x").get).toChar.toString + (activePlayer.pawnPosition.charAt(1) +  move.get("y").get).toChar.toString
+        val newPosition =  (activePlayer.pawnPosition.charAt(0) + move.get("x").get.asInstanceOf[Int]).toChar.toString + (activePlayer.pawnPosition.charAt(1) +  move.get("y").get.asInstanceOf[Int]).toChar.toString
 
         if (newPosition == nonActivePlayer.pawnPosition) {
-          val jumpNewPosition = (newPosition.charAt(0) + move.get("x").get).toChar.toString + (newPosition.charAt(1) +  move.get("y").get).toChar.toString
+          val jumpNewPosition = (newPosition.charAt(0) + move.get("x").get.asInstanceOf[Int]).toChar.toString + (newPosition.charAt(1) +  move.get("y").get.asInstanceOf[Int]).toChar.toString
 
           if(isOutOfBoardMove(jumpNewPosition)) {
             if(move.get("x").get == 0) {
@@ -102,13 +106,58 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
           }
 
         } else {
-          if(!isOutOfBoardMove(newPosition)) {
+          if(!isOutOfBoardMove(newPosition) && !isBlockedByWall(activePlayer.pawnPosition, move.get("direction").get.toString)) {
             validMoves += newPosition
           }
         }
       }
 
       validMoves contains move.position
+    }
+
+    private def isBlockedByWall(position: String, direction: String) : Boolean = {
+
+      if(direction == "up") {
+        Array(Map("x" -> -1, "y" -> 0, "direction" -> "v"), Map("x" -> 0, "y" -> 0, "direction" -> "v")).foreach((map) => {
+          var wallPosition = (position.charAt(0) + map.get("x").get.asInstanceOf[Int]).toChar.toString + (position.charAt(1) + map.get("y").get.asInstanceOf[Int]).toChar.toString + map.get("direction").get.toString
+
+          if (wallPositions.contains(wallPosition)) {
+            return true
+          }
+        })
+      }
+
+      if(direction == "down") {
+        Array(Map("x" -> -1, "y" -> -1, "direction" -> "v"), Map("x" -> 0, "y" -> -1, "direction" -> "v")).foreach((map) => {
+          var wallPosition = (position.charAt(0) + map.get("x").get.asInstanceOf[Int]).toChar.toString + (position.charAt(1) + map.get("y").get.asInstanceOf[Int]).toChar.toString + map.get("direction").get.toString
+
+          if (wallPositions.contains(wallPosition)) {
+            return true
+          }
+        })
+      }
+
+      if(direction == "left") {
+        Array(Map("x" -> -1, "y" -> -1, "direction" -> "h"), Map("x" -> -1, "y" -> 0, "direction" -> "h")).foreach((map) => {
+          var wallPosition = (position.charAt(0) + map.get("x").get.asInstanceOf[Int]).toChar.toString + (position.charAt(1) + map.get("y").get.asInstanceOf[Int]).toChar.toString + map.get("direction").get.toString
+
+          if (wallPositions.contains(wallPosition)) {
+            return true
+          }
+        })
+      }
+
+      if(direction == "right") {
+        Array(Map("x" -> 0, "y" -> -1, "direction" -> "h"), Map("x" -> 0, "y" -> 0, "direction" -> "h")).foreach((map) => {
+          var wallPosition = (position.charAt(0) + map.get("x").get.asInstanceOf[Int]).toChar.toString + (position.charAt(1) + map.get("y").get.asInstanceOf[Int]).toChar.toString + map.get("direction").get.toString
+
+          if (wallPositions.contains(wallPosition)) {
+            return true
+          }
+        })
+      }
+
+      return false
     }
 
     private def isOutOfBoardMove(position : String) = {
@@ -130,10 +179,6 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
         wallPositions.contains(move.position.charAt(0).toString + (move.position.charAt(1) - 1).toChar.toString + "v") ||
           wallPositions.contains(move.position.charAt(0).toString + (move.position.charAt(1) + 1).toChar.toString + "v")
       }
-    }
-
-    lazy val wallPositions = {
-      game.moves.filter((m) => m.moveType == "wall").map((m) => m.position)
     }
   }
 }
