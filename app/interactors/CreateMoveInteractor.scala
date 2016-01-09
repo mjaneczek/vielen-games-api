@@ -111,14 +111,14 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
           }
         }
       }
-
+      
       validMoves contains move.position
     }
 
     private def isBlockedByWall(position: String, direction: String) : Boolean = {
 
       if(direction == "up") {
-        Array(Map("x" -> -1, "y" -> 0, "direction" -> "v"), Map("x" -> 0, "y" -> 0, "direction" -> "v")).foreach((map) => {
+        Array(Map("x" -> -1, "y" -> 0, "direction" -> "h"), Map("x" -> 0, "y" -> 0, "direction" -> "h")).foreach((map) => {
           var wallPosition = (position.charAt(0) + map.get("x").get.asInstanceOf[Int]).toChar.toString + (position.charAt(1) + map.get("y").get.asInstanceOf[Int]).toChar.toString + map.get("direction").get.toString
 
           if (wallPositions.contains(wallPosition)) {
@@ -128,7 +128,7 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
       }
 
       if(direction == "down") {
-        Array(Map("x" -> -1, "y" -> -1, "direction" -> "v"), Map("x" -> 0, "y" -> -1, "direction" -> "v")).foreach((map) => {
+        Array(Map("x" -> -1, "y" -> -1, "direction" -> "h"), Map("x" -> 0, "y" -> -1, "direction" -> "h")).foreach((map) => {
           var wallPosition = (position.charAt(0) + map.get("x").get.asInstanceOf[Int]).toChar.toString + (position.charAt(1) + map.get("y").get.asInstanceOf[Int]).toChar.toString + map.get("direction").get.toString
 
           if (wallPositions.contains(wallPosition)) {
@@ -138,7 +138,7 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
       }
 
       if(direction == "left") {
-        Array(Map("x" -> -1, "y" -> -1, "direction" -> "h"), Map("x" -> -1, "y" -> 0, "direction" -> "h")).foreach((map) => {
+        Array(Map("x" -> -1, "y" -> -1, "direction" -> "v"), Map("x" -> -1, "y" -> 0, "direction" -> "v")).foreach((map) => {
           var wallPosition = (position.charAt(0) + map.get("x").get.asInstanceOf[Int]).toChar.toString + (position.charAt(1) + map.get("y").get.asInstanceOf[Int]).toChar.toString + map.get("direction").get.toString
 
           if (wallPositions.contains(wallPosition)) {
@@ -148,7 +148,7 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
       }
 
       if(direction == "right") {
-        Array(Map("x" -> 0, "y" -> -1, "direction" -> "h"), Map("x" -> 0, "y" -> 0, "direction" -> "h")).foreach((map) => {
+        Array(Map("x" -> 0, "y" -> -1, "direction" -> "v"), Map("x" -> 0, "y" -> 0, "direction" -> "v")).foreach((map) => {
           var wallPosition = (position.charAt(0) + map.get("x").get.asInstanceOf[Int]).toChar.toString + (position.charAt(1) + map.get("y").get.asInstanceOf[Int]).toChar.toString + map.get("direction").get.toString
 
           if (wallPositions.contains(wallPosition)) {
