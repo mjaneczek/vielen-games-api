@@ -9,5 +9,5 @@ case class Player
   team: String,
   providerId: String,
   var pawnPosition: String,
-  wallsLeft: Integer
+  var wallsLeft: Integer
 )

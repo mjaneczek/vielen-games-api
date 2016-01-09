@@ -120,7 +120,7 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
 
   class WallMoveValidator {
     def isValidMove = {
-      move.position.matches("[a-h][1-8][vh]")
+      activePlayer.wallsLeft > 0 && move.position.matches("[a-h][1-8][vh]")
     }
   }
 }
