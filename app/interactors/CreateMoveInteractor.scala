@@ -63,15 +63,21 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
     }
   }
 
-  private def canMove = {
+  private def canMove  = {
+    val conditionsForPawnAndWallMove =
     activePlayer.id == user.id &&
     !game.players.map(p => p.pawnPosition).contains(move.position) &&
-    !game.moves.filter((m) => m.moveType == "wall").map((m) => m.position).contains(move.position) &&
-    new PawnMoveValidator().isValidPawnMove
+    !game.moves.filter((m) => m.moveType == "wall").map((m) => m.position).contains(move.position)
+
+    if(move.moveType == "pawn") {
+      conditionsForPawnAndWallMove && new PawnMoveValidator().isValidMove
+    } else {
+      conditionsForPawnAndWallMove && new WallMoveValidator().isValidMove
+    }
   }
 
   class PawnMoveValidator {
-    def isValidPawnMove = {
+    def isValidMove = {
       val validMoves = ArrayBuffer.empty[String]
 
       val moveLeft  = Map("x" -> -1, "y" -> 0)
@@ -109,6 +115,12 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
 
     private def isOutOfBoardMove(position : String) = {
       !PossiblePositions.pawn.contains(position)
+    }
+  }
+
+  class WallMoveValidator {
+    def isValidMove = {
+      move.position.matches("[a-h][1-8][vh]")
     }
   }
 }

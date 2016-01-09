@@ -16,4 +16,16 @@ trait MoveValidationSpec extends InteractorSpec {
       new CreateMoveInteractor(game, activeUser, Move(moveType = "pawn", position = position)).call == (moves contains position)
     }) must beTrue
   }
+
+  def assertValidWallMoves(moves : String*) = {
+    assertWallMoves(moves, expectedCondition = true)
+  }
+
+  def assertInvalidWallMoves(moves : String*) = {
+    assertWallMoves(moves, expectedCondition = false)
+  }
+
+  private def assertWallMoves(moves : Seq[String], expectedCondition : Boolean) = {
+    moves.forall((p) => new CreateMoveInteractor(game, activeUser, Move(moveType = "wall", position = p)).call == expectedCondition) must beTrue
+  }
 }
