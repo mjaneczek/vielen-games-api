@@ -1,12 +1,13 @@
 package interactors
 
-import java.util.ArrayList;
 import DAOs.GameDAO
 import com.mongodb.WriteConcern
 import com.mongodb.casbah.commons.MongoDBObject
 import models.{User, Player, Move, Game}
 import org.joda.time.DateTime
 import utils.PossiblePositions
+
+import scala.collection.mutable.ArrayBuffer
 
 class CreateMoveInteractor(game : Game, user : User, move: Move) {
   def call = {
@@ -71,7 +72,7 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
 
   class PawnMoveValidator {
     def isValidPawnMove = {
-      val validMoves = new ArrayList[String]()
+      val validMoves = ArrayBuffer.empty[String]
 
       val moveLeft  = Map("x" -> -1, "y" -> 0)
       val moveRight = Map("x" -> 1, "y" -> 0)
@@ -86,19 +87,19 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
 
           if(isOutOfBoardMove(jumpNewPosition)) {
             if(move.get("x").get == 0) {
-              validMoves.add((activePlayer.pawnPosition.charAt(0) - 1).toChar.toString + newPosition.charAt(1).toString)
-              validMoves.add((activePlayer.pawnPosition.charAt(0) + 1).toChar.toString + newPosition.charAt(1).toString)
+              validMoves += ((activePlayer.pawnPosition.charAt(0) - 1).toChar.toString + newPosition.charAt(1).toString)
+              validMoves += ((activePlayer.pawnPosition.charAt(0) + 1).toChar.toString + newPosition.charAt(1).toString)
             } else {
-              validMoves.add(newPosition.charAt(0).toString + (activePlayer.pawnPosition.charAt(1) - 1).toChar.toString)
-              validMoves.add(newPosition.charAt(0).toString + (activePlayer.pawnPosition.charAt(1) + 1).toChar.toString)
+              validMoves += (newPosition.charAt(0).toString + (activePlayer.pawnPosition.charAt(1) - 1).toChar.toString)
+              validMoves += (newPosition.charAt(0).toString + (activePlayer.pawnPosition.charAt(1) + 1).toChar.toString)
             }
           } else {
-            validMoves.add(jumpNewPosition)
+            validMoves += jumpNewPosition
           }
 
         } else {
           if(!isOutOfBoardMove(newPosition)) {
-            validMoves.add(newPosition)
+            validMoves += newPosition
           }
         }
       }
