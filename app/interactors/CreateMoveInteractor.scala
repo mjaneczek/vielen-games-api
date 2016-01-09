@@ -63,16 +63,14 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
     }
   }
 
-  private def canMove  = {
-    val conditionsForPawnAndWallMove =
-    activePlayer.id == user.id &&
-    !game.players.map(p => p.pawnPosition).contains(move.position) &&
-    !game.moves.filter((m) => m.moveType == "wall").map((m) => m.position).contains(move.position)
+  private def canMove : Boolean  = {
+    if(activePlayer.id != user.id)
+      return false
 
     if(move.moveType == "pawn") {
-      conditionsForPawnAndWallMove && new PawnMoveValidator().isValidMove
+      new PawnMoveValidator().isValidMove
     } else {
-      conditionsForPawnAndWallMove && new WallMoveValidator().isValidMove
+      new WallMoveValidator().isValidMove
     }
   }
 
@@ -120,7 +118,22 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
 
   class WallMoveValidator {
     def isValidMove = {
-      activePlayer.wallsLeft > 0 && move.position.matches("[a-h][1-8][vh]")
+      activePlayer.wallsLeft > 0 && move.position.matches("[a-h][1-8][vh]") && !wallPositions.contains(move.position) &&
+      !wallPositions.map((p) => p.take(2).toString).contains(move.position.take(2).toString) && !isPartiallyOverlapping
+    }
+
+    def isPartiallyOverlapping = {
+      if(move.position.charAt(2) == 'h') {
+        wallPositions.contains((move.position.charAt(0) - 1).toChar.toString + move.position.charAt(1).toString + "h") ||
+          wallPositions.contains((move.position.charAt(0) + 1).toChar.toString + move.position.charAt(1).toString + "h")
+      } else {
+        wallPositions.contains(move.position.charAt(0).toString + (move.position.charAt(1) - 1).toChar.toString + "v") ||
+          wallPositions.contains(move.position.charAt(0).toString + (move.position.charAt(1) + 1).toChar.toString + "v")
+      }
+    }
+
+    lazy val wallPositions = {
+      game.moves.filter((m) => m.moveType == "wall").map((m) => m.position)
     }
   }
 }
