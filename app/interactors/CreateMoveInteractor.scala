@@ -94,12 +94,29 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
           val jumpNewPosition = (newPosition.charAt(0) + move.get("x").get.asInstanceOf[Int]).toChar.toString + (newPosition.charAt(1) +  move.get("y").get.asInstanceOf[Int]).toChar.toString
 
           if(isOutOfBoardMove(jumpNewPosition) || isBlockedByWall(newPosition, move.get("direction").get.toString)) {
-            if(move.get("x").get == 0) {
-              validMoves += ((activePlayer.pawnPosition.charAt(0) - 1).toChar.toString + newPosition.charAt(1).toString)
-              validMoves += ((activePlayer.pawnPosition.charAt(0) + 1).toChar.toString + newPosition.charAt(1).toString)
-            } else {
-              validMoves += (newPosition.charAt(0).toString + (activePlayer.pawnPosition.charAt(1) - 1).toChar.toString)
-              validMoves += (newPosition.charAt(0).toString + (activePlayer.pawnPosition.charAt(1) + 1).toChar.toString)
+            if(move.get("x").get == 0) { // up - down
+              val leftJump = (activePlayer.pawnPosition.charAt(0) - 1).toChar.toString + newPosition.charAt(1).toString
+              val rightJump = (activePlayer.pawnPosition.charAt(0) + 1).toChar.toString + newPosition.charAt(1).toString
+
+              if(!isOutOfBoardMove(leftJump) && !isBlockedByWall(newPosition, "left")) {
+                validMoves += leftJump
+              }
+
+              if(!isOutOfBoardMove(rightJump) && !isBlockedByWall(newPosition, "right")) {
+                validMoves += rightJump
+              }
+
+            } else { // left - right
+              val downJump = newPosition.charAt(0).toString + (activePlayer.pawnPosition.charAt(1) - 1).toChar.toString
+              val upJump = newPosition.charAt(0).toString + (activePlayer.pawnPosition.charAt(1) + 1).toChar.toString
+
+              if(!isOutOfBoardMove(downJump) && !isBlockedByWall(newPosition, "down")) {
+                validMoves += downJump
+              }
+
+              if(!isOutOfBoardMove(upJump) && !isBlockedByWall(newPosition, "up")) {
+                validMoves += upJump
+              }
             }
           } else {
             validMoves += jumpNewPosition
