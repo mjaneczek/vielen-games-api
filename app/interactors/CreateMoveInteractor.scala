@@ -24,7 +24,7 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
   }
 
   private def updatedPlayers = {
-    List(updatedActivePlayer, nonActivePlayer)
+    List(updatedActivePlayer, opponent)
   }
 
   private def updatedActivePlayer = {
@@ -38,7 +38,7 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
     game.players.find(player => player.team == game.activeTeam).get
   }
 
-  private def nonActivePlayer = {
+  private def opponent = {
     game.players.filterNot(player => player == activePlayer).head
   }
 
@@ -79,102 +79,69 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
   }
 
   class PawnMoveValidator {
+    val moveLeft  = Map("direction" -> "left",  "x" -> -1, "y" ->  0)
+    val moveRight = Map("direction" -> "right", "x" ->  1, "y" ->  0)
+    val moveUp    = Map("direction" -> "up",    "x" ->  0, "y" ->  1)
+    val moveDown  = Map("direction" -> "down",  "x" ->  0, "y" -> -1)
+
+    val validPositions = ArrayBuffer.empty[String]
+
     def isValidMove = {
-      val validMoves = ArrayBuffer.empty[String]
-
-      val moveLeft  = Map("x" -> -1, "y" -> 0, "direction" -> "left")
-      val moveRight = Map("x" -> 1, "y" -> 0, "direction" -> "right")
-      val moveUp    = Map("x" -> 0, "y" -> 1, "direction" -> "up")
-      val moveDown  = Map("x" -> 0, "y" -> -1, "direction" -> "down")
-
       for(move <- Array(moveLeft, moveRight, moveUp, moveDown)) {
-        val newPosition =  (activePlayer.pawnPosition.charAt(0) + move.get("x").get.asInstanceOf[Int]).toChar.toString + (activePlayer.pawnPosition.charAt(1) +  move.get("y").get.asInstanceOf[Int]).toChar.toString
-
-        if (newPosition == nonActivePlayer.pawnPosition && !isBlockedByWall(activePlayer.pawnPosition, move.get("direction").get.toString)) {
-          val jumpNewPosition = (newPosition.charAt(0) + move.get("x").get.asInstanceOf[Int]).toChar.toString + (newPosition.charAt(1) +  move.get("y").get.asInstanceOf[Int]).toChar.toString
-
-          if(isOutOfBoardMove(jumpNewPosition) || isBlockedByWall(newPosition, move.get("direction").get.toString)) {
-            if(move.get("x").get == 0) { // up - down
-              val leftJump = (activePlayer.pawnPosition.charAt(0) - 1).toChar.toString + newPosition.charAt(1).toString
-              val rightJump = (activePlayer.pawnPosition.charAt(0) + 1).toChar.toString + newPosition.charAt(1).toString
-
-              if(!isOutOfBoardMove(leftJump) && !isBlockedByWall(newPosition, "left")) {
-                validMoves += leftJump
-              }
-
-              if(!isOutOfBoardMove(rightJump) && !isBlockedByWall(newPosition, "right")) {
-                validMoves += rightJump
-              }
-
-            } else { // left - right
-              val downJump = newPosition.charAt(0).toString + (activePlayer.pawnPosition.charAt(1) - 1).toChar.toString
-              val upJump = newPosition.charAt(0).toString + (activePlayer.pawnPosition.charAt(1) + 1).toChar.toString
-
-              if(!isOutOfBoardMove(downJump) && !isBlockedByWall(newPosition, "down")) {
-                validMoves += downJump
-              }
-
-              if(!isOutOfBoardMove(upJump) && !isBlockedByWall(newPosition, "up")) {
-                validMoves += upJump
-              }
-            }
-          } else {
-            validMoves += jumpNewPosition
-          }
-
-        } else {
-          if(!isOutOfBoardMove(newPosition) && !isBlockedByWall(activePlayer.pawnPosition, move.get("direction").get.toString)) {
-            validMoves += newPosition
-          }
-        }
+        calculatePossiblePositions(move)
       }
-      
-      validMoves contains move.position
+
+      validPositions contains move.position
+    }
+
+    private def calculatePossiblePositions(move : Map[String, Any]) : Unit = {
+      if(isBlockedMove(activePlayer.pawnPosition, move))
+        return
+
+      if (calculateNewPosition(activePlayer.pawnPosition, move) == opponent.pawnPosition) {
+        if(!isBlockedMove(opponent.pawnPosition, move)) {
+          addPositionIfValid(opponent.pawnPosition, move)
+        } else {
+          addPositionsForSideJumping(move)
+        }
+
+      } else {
+        addPositionIfValid(activePlayer.pawnPosition, move)
+      }
+    }
+
+    private def addPositionIfValid(position : String, move :  Map[String, Any]) = {
+      if(!isBlockedMove(position, move))
+        validPositions += calculateNewPosition(position, move)
+    }
+
+    private def isBlockedMove(position: String, move : Map[String, Any]) : Boolean = {
+      isBlockedByWall(position, move.get("direction").get.toString) || isOutOfBoardMove(calculateNewPosition(position, move))
+    }
+
+    private def calculateNewPosition(position: String, move : Map[String, Any]) = {
+      (position.charAt(0) + move.get("x").get.asInstanceOf[Int]).toChar.toString + (position.charAt(1) +  move.get("y").get.asInstanceOf[Int]).toChar.toString + move.getOrElse("orientation", "")
+    }
+
+    private def addPositionsForSideJumping(move : Map[String, Any]) = {
+      if(move.get("x").get == 0) { // up - down
+        addPositionIfValid(opponent.pawnPosition, moveLeft)
+        addPositionIfValid(opponent.pawnPosition, moveRight)
+      } else { // left - right
+        addPositionIfValid(opponent.pawnPosition, moveUp)
+        addPositionIfValid(opponent.pawnPosition, moveDown)
+      }
     }
 
     private def isBlockedByWall(position: String, direction: String) : Boolean = {
+      val blockingWallPositions = Map[String, Array[Map[String, Any]]] (
+        "up" ->    Array(Map("x" -> -1, "y" ->  0, "orientation" -> "h"), Map("x" ->  0, "y" ->  0, "orientation" -> "h")),
+        "down" ->  Array(Map("x" -> -1, "y" -> -1, "orientation" -> "h"), Map("x" ->  0, "y" -> -1, "orientation" -> "h")),
+        "left" ->  Array(Map("x" -> -1, "y" -> -1, "orientation" -> "v"), Map("x" -> -1, "y" ->  0, "orientation" -> "v")),
+        "right" -> Array(Map("x" ->  0, "y" -> -1, "orientation" -> "v"), Map("x" ->  0, "y" ->  0, "orientation" -> "v"))
+      )
 
-      if(direction == "up") {
-        Array(Map("x" -> -1, "y" -> 0, "direction" -> "h"), Map("x" -> 0, "y" -> 0, "direction" -> "h")).foreach((map) => {
-          var wallPosition = (position.charAt(0) + map.get("x").get.asInstanceOf[Int]).toChar.toString + (position.charAt(1) + map.get("y").get.asInstanceOf[Int]).toChar.toString + map.get("direction").get.toString
-
-          if (wallPositions.contains(wallPosition)) {
-            return true
-          }
-        })
-      }
-
-      if(direction == "down") {
-        Array(Map("x" -> -1, "y" -> -1, "direction" -> "h"), Map("x" -> 0, "y" -> -1, "direction" -> "h")).foreach((map) => {
-          var wallPosition = (position.charAt(0) + map.get("x").get.asInstanceOf[Int]).toChar.toString + (position.charAt(1) + map.get("y").get.asInstanceOf[Int]).toChar.toString + map.get("direction").get.toString
-
-          if (wallPositions.contains(wallPosition)) {
-            return true
-          }
-        })
-      }
-
-      if(direction == "left") {
-        Array(Map("x" -> -1, "y" -> -1, "direction" -> "v"), Map("x" -> -1, "y" -> 0, "direction" -> "v")).foreach((map) => {
-          var wallPosition = (position.charAt(0) + map.get("x").get.asInstanceOf[Int]).toChar.toString + (position.charAt(1) + map.get("y").get.asInstanceOf[Int]).toChar.toString + map.get("direction").get.toString
-
-          if (wallPositions.contains(wallPosition)) {
-            return true
-          }
-        })
-      }
-
-      if(direction == "right") {
-        Array(Map("x" -> 0, "y" -> -1, "direction" -> "v"), Map("x" -> 0, "y" -> 0, "direction" -> "v")).foreach((map) => {
-          var wallPosition = (position.charAt(0) + map.get("x").get.asInstanceOf[Int]).toChar.toString + (position.charAt(1) + map.get("y").get.asInstanceOf[Int]).toChar.toString + map.get("direction").get.toString
-
-          if (wallPositions.contains(wallPosition)) {
-            return true
-          }
-        })
-      }
-
-      return false
+      blockingWallPositions.get(direction).get.exists((move) => wallPositions.contains(calculateNewPosition(position, move)))
     }
 
     private def isOutOfBoardMove(position : String) = {
