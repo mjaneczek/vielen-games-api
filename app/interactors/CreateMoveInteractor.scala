@@ -93,7 +93,7 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
         if (newPosition == nonActivePlayer.pawnPosition && !isBlockedByWall(activePlayer.pawnPosition, move.get("direction").get.toString)) {
           val jumpNewPosition = (newPosition.charAt(0) + move.get("x").get.asInstanceOf[Int]).toChar.toString + (newPosition.charAt(1) +  move.get("y").get.asInstanceOf[Int]).toChar.toString
 
-          if(isOutOfBoardMove(jumpNewPosition)) {
+          if(isOutOfBoardMove(jumpNewPosition) || isBlockedByWall(newPosition, move.get("direction").get.toString)) {
             if(move.get("x").get == 0) {
               validMoves += ((activePlayer.pawnPosition.charAt(0) - 1).toChar.toString + newPosition.charAt(1).toString)
               validMoves += ((activePlayer.pawnPosition.charAt(0) + 1).toChar.toString + newPosition.charAt(1).toString)
