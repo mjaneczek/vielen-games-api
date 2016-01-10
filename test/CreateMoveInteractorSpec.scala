@@ -1,26 +1,15 @@
-import DAOs.{GameDAO}
-import interactors.{CreateMoveInteractor}
-import models.{User, Move, Player, Game}
+import DAOs.GameDAO
+import interactors.CreateMoveInteractor
+import models.Move
 
-class CreateMoveInteractorSpec extends InteractorSpec {
-  val user = User(name = "Test", providerId = "1234")
-  val activePlayer = Player(id = user.id, name = "Test", providerId = "1234", team = "team_1", pawnPosition = "e1", wallsLeft = 10)
-
-  val secondUser = User(name = "Test 2", providerId = "1234")
-  val player = Player(id = secondUser.id, name = "Test 2", providerId = "1234", team = "team_2", pawnPosition = "e9", wallsLeft = 10)
-
-  val game = Game(players = List(activePlayer, player), activeTeam = "team_1")
-  val move = Move(position = "e2", moveType = "pawn")
-
-  val interactor = new CreateMoveInteractor(game, user, move)
-
+class CreateMoveInteractorSpec extends MoveValidationSpec {
   "Create move interactor" should {
 
     "creates new move in game" in {
       GameDAO.insert(game)
-      interactor.call
+      new CreateMoveInteractor(game, activeUser, Move(position = "e2", moveType = "pawn")).call
 
-      lastGame.moves.head must beEqualTo(move)
+      lastGame.moves.head must beEqualTo(Move(position = "e2", moveType = "pawn"))
       lastGame.activeTeam must beEqualTo("team_2")
     }
 
@@ -29,35 +18,24 @@ class CreateMoveInteractorSpec extends InteractorSpec {
     }
 
     "calculates walls left" in {
-      new CreateMoveInteractor(game, user, Move(moveType = "wall", position = "he3")).call
+      new CreateMoveInteractor(game, activeUser, Move(moveType = "wall", position = "a1h")).call
       lastGame.players.head.wallsLeft must beEqualTo(9)
     }
 
+    "checks is your turn" in {
+      new CreateMoveInteractor(game.copy(activeTeam = "team_2"), activeUser, Move(moveType = "pawn", position = "e9")).call must beEqualTo(false)
+    }
+
     "checks winning move" in {
-      new CreateMoveInteractor(game, user, Move(moveType = "pawn", position = "a9")).call
+      activePlayer.pawnPosition = "a8"
+      new CreateMoveInteractor(game, activeUser, Move(moveType = "pawn", position = "a9")).call
       lastGame.winner must beEqualTo(activePlayer)
 
-      new CreateMoveInteractor(game.copy(activeTeam = "team_2"), secondUser, Move(moveType = "pawn", position = "a1")).call
-      lastGame.winner must beEqualTo(player)
+      opponentPlayer.pawnPosition = "a2"
+      new CreateMoveInteractor(game.copy(activeTeam = "team_2"), opponentUser, Move(moveType = "pawn", position = "a1")).call
+      lastGame.winner must beEqualTo(opponentPlayer)
 
       lastGame.activeTeam must beNull
-    }
-
-    "checks is your turn" in {
-      val result = new CreateMoveInteractor(game.copy(activeTeam = "team_2"), user, Move(moveType = "pawn", position = "e9")).call
-      result must beEqualTo(false)
-    }
-
-    "returns false if pawn move is invalid" in {
-      val result = new CreateMoveInteractor(game, user, Move(moveType = "pawn", position = "e1")).call
-      result must beEqualTo(false)
-    }
-
-    "returns false if wall move is invalid" in {
-      new CreateMoveInteractor(game, user, Move(moveType = "wall", position = "he3")).call
-
-      val result = new CreateMoveInteractor(GameDAO.findOneById(game.id).get, secondUser, Move(moveType = "wall", position = "he3")).call
-      result must beEqualTo(false)
     }
   }
 
