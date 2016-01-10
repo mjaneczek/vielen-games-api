@@ -13,3 +13,16 @@ case class Game
   createdAt: DateTime = DateTime.now(),
   updatedAt: DateTime = DateTime.now()
 )
+{
+  def activePlayer = {
+    players.find(player => player.team == activeTeam).get
+  }
+
+  def opponent = {
+    players.filterNot(player => player == activePlayer).head
+  }
+
+  def wallPositions = {
+    moves.filter((m) => m.moveType == "wall").map((m) => m.position)
+  }
+}

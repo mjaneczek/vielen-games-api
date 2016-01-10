@@ -22,27 +22,19 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
   }
 
   private def updatedPlayers = {
-    List(updatedActivePlayer, opponent)
+    List(updatedActivePlayer, game.opponent)
   }
 
   private def updatedActivePlayer = {
     move.moveType match {
-      case "pawn" => activePlayer.copy(pawnPosition = move.position)
-      case "wall" => activePlayer.copy(wallsLeft = activePlayer.wallsLeft - 1)
+      case "pawn" => game.activePlayer.copy(pawnPosition = move.position)
+      case "wall" => game.activePlayer.copy(wallsLeft = game.activePlayer.wallsLeft - 1)
     }
-  }
-
-  private def activePlayer = {
-    game.players.find(player => player.team == game.activeTeam).get
-  }
-
-  private def opponent = {
-    game.players.filterNot(player => player == activePlayer).head
   }
 
   private def winner = {
     if(winningYPosition(game.activeTeam) == move.position(1) && move.moveType == "pawn")
-      activePlayer
+      game.activePlayer
     else
       null
   }
@@ -62,7 +54,7 @@ class CreateMoveInteractor(game : Game, user : User, move: Move) {
   }
 
   private def canMove : Boolean  = {
-    if(activePlayer.id != user.id)
+    if(game.activePlayer.id != user.id)
       return false
 
     if(move.moveType == "pawn") {
