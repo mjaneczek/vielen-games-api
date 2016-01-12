@@ -37,15 +37,7 @@ class PawnSideJumpingBlockedSpec extends MoveValidationSpec {
   }
 
   "Pawn jumping using wall behind opponent blocked by another wall validation" should {
-    game.moves = List(
-      Move(moveType = "wall", position = "b5v"),
-      Move(moveType = "wall", position = "e4v"),
-      Move(moveType = "wall", position = "g6v"),
-      Move(moveType = "wall", position = "f7v"),
-      Move(moveType = "wall", position = "c4h"),
-      Move(moveType = "wall", position = "f5h"),
-      Move(moveType = "wall", position = "f6h")
-    )
+    setGameWalls("b5v", "e4v", "g6v", "f7v", "c4h", "f5h", "f6h")
 
     "validates jumping left or right over opponent when north wall is behind" in {
       activePlayer.pawnPosition = "f4"

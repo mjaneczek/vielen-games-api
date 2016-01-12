@@ -32,10 +32,7 @@ class PawnSideJumpingSpec extends MoveValidationSpec {
   }
 
   "Pawn jumping using wall behind opponent validation" should {
-    game.moves = List(
-      Move(moveType = "wall", position = "c4h"),
-      Move(moveType = "wall", position = "g6v")
-    )
+    setGameWalls("c4h", "g6v")
 
     "allows jumping left or right over opponent when north wall is behind" in {
       activePlayer.pawnPosition = "c3"

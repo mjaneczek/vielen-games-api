@@ -2,10 +2,7 @@ import models.Move
 
 class PawnMovesBlockedByWallsSpec extends MoveValidationSpec {
   "Pawn moves blocked by walls validation" should {
-    game.moves = List(
-      Move(moveType = "wall", position = "c6v"),
-      Move(moveType = "wall", position = "g6h")
-    )
+    setGameWalls("c6v", "g6h")
 
     "validates jumping over north wall" in {
       activePlayer.pawnPosition = "g6"

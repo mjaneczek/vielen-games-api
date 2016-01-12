@@ -11,6 +11,10 @@ trait MoveValidationSpec extends InteractorSpec {
 
   var game = Game(players = List(activePlayer, opponentPlayer), activeTeam = "team_1")
 
+  def setGameWalls(wallPositions : String*) = {
+    game.moves = wallPositions.map(p => Move(position = p, moveType = "wall")).toList
+  }
+
   def assertValidPawnMoves(moves : String*) = {
     PossiblePositions.pawn.forall((position) => {
       new CreateMoveInteractor(game, activeUser, Move(moveType = "pawn", position = position)).call == (moves contains position)
